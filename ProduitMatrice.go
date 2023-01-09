@@ -3,38 +3,38 @@ package main
 import "fmt"
 
 func main() {
-	var rows, columns, i, j int
+	var lignes, colonnes, i, j int
 
-	var multimat1 [10][10]int
-	var multimat2 [10][10]int
-	var multiplicationnmat [10][10]int
+	var mat1 [10][10]int
+	var mat2 [10][10]int
+	var matProd [10][10]int
 
-	fmt.Print("Enter the Multiplication Matrix Rows and Columns = ")
-	fmt.Scan(&rows, &columns)
+	fmt.Print("Rentrer le nombre de Lignes puis celui de colonnes = ")
+	fmt.Scan(&lignes, &colonnes)
 
-	fmt.Print("Enter the First Matrix Items to Multiplication = ")
-	for i = 0; i < rows; i++ {
-		for j = 0; j < columns; j++ {
-			fmt.Scan(&multimat1[i][j])
+	fmt.Print("Rentrer les termes de la première Matrice = ")
+	for i = 0; i < lignes; i++ {
+		for j = 0; j < colonnes; j++ {
+			fmt.Scan(&mat1[i][j])
 		}
 	}
 
-	fmt.Print("Enter the Second Matrix Items to Multiplication = ")
-	for i = 0; i < rows; i++ {
-		for j = 0; j < columns; j++ {
-			fmt.Scan(&multimat2[i][j])
+	fmt.Print("Rentrer les termes de la deuxième Matrice = ")
+	for i = 0; i < lignes; i++ {
+		for j = 0; j < colonnes; j++ {
+			fmt.Scan(&mat2[i][j])
 		}
 	}
 
-	for i = 0; i < rows; i++ {
-		for j = 0; j < columns; j++ {
-			multiplicationnmat[i][j] = multimat1[i][j] * multimat2[i][j]
+	for i = 0; i < lignes; i++ {
+		for j = 0; j < colonnes; j++ {
+			matProd[i][j] = mat1[i][j] * mat2[i][j]
 		}
 	}
-	fmt.Println("The Go Result of Matrix Multiplication = ")
-	for i = 0; i < rows; i++ {
-		for j = 0; j < columns; j++ {
-			fmt.Print(multiplicationnmat[i][j], "\t")
+	fmt.Println("Le Résultat de Go pour la matrice produit = ")
+	for i = 0; i < lignes; i++ {
+		for j = 0; j < colonnes; j++ {
+			fmt.Print(matProd[i][j], "\t")
 		}
 		fmt.Println()
 	}
