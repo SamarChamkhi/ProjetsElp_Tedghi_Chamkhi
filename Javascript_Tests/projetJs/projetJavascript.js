@@ -86,4 +86,7 @@ rl.on('line', (line) => {
             }else if(action === '-c'){
                 process.resume();
             }
-            break
+            break;
+        
+    }
+})
