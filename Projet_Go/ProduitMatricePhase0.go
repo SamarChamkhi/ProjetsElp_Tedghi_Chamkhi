@@ -2,6 +2,16 @@ package main
 
 import "fmt"
 
+func calculUneCase(c []int, l []int, taille int) int {
+	var res int
+	res = 0
+	for i := 0; i < taille; i++ {
+		res += c[i] * l[i]
+	}
+	return res
+
+}
+
 func main() {
 	var lignes1, colonnes1, lignes2, colonnes2, i, j, k int
 
