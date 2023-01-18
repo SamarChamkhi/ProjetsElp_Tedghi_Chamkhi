@@ -59,22 +59,27 @@ function manageProcess(action, pid) {
     }
 }
 function cdFunc(chemin){
-    let child_process = require('child_process');
-    child_process.spawn(
-        // With this variable we know we use the same shell as the one that started this process
-        process.env.SHELL,
-        {
-        // Change the cwd
-        cwd: `${process.cwd()} chemin ${product_id}`,
-    
-        // This makes this process "take over" the terminal
-        stdio: 'inherit',
-    
-        // If you want, you can also add more environment variables here, but you can also remove this line
-        //env: { ...process.env, extra_environment: chemin },
-        },
-    );
-}
+    exec('ps -e', (error, stdout, stderr) => {
+        if (error) {
+            console.error(`exec error: ${error}`);
+            return;
+        }
+        let child_process = require('child_process');
+        child_process.spawn(
+            // With this variable we know we use the same shell as the one that started this process
+            process.env.SHELL,
+            {
+            // Change the cwd
+            cwd: `${process.cwd()} chemin ${product_id}`,
+        
+            // This makes this process "take over" the terminal
+            stdio: 'inherit',
+        
+            // If you want, you can also add more environment variables here, but you can also remove this line
+            //env: { ...process.env, extra_environment: chemin },
+            },
+        );
+    }
 
 // Boucle infinie pour lire les commandes entrées par l'utilisateur
 const rl = readline.createInterface({
@@ -119,3 +124,89 @@ rl.on('line', (line) => {
             
     }
 })
+
+/*//fct pour cd
+const { exec } = require('child_process');
+
+function changeDirectory(dir) {
+  return new Promise((resolve, reject) => {
+    exec(`cd ${dir}`, (error, stdout, stderr) => {
+      if (error) {
+        reject(error);
+      }
+      resolve(stdout);
+    });
+  });
+}
+
+changeDirectory('/path/to/directory')
+  .then(console.log)
+  .catch(console.error);
+//fct pour cd*/
+
+/*fct pour tache de fond : 
+//Dans cet exemple, la fonction runBackgroundProcess() 
+//prend une commande en argument et l'exécute en 
+//utilisant exec(). 
+//La fonction retourne les résultats de la commande 
+//(stdout) dans la console.
+const { exec } = require('child_process');
+
+function runBackgroundProcess(command) {
+    exec(command, (error, stdout, stderr) => {
+        if (error) {
+            console.error(`Error: ${error}`);
+            return;
+        }
+        console.log(`Output: ${stdout}`);
+    });
+}*/
+/*option n 2 : 
+Dans cet exemple, la fonction runBackgroundProcess() 
+//prend en argument une commande et des arguments, 
+//et l'exécute en utilisant spawn(). La fonction écoute 
+//les événements stdout, stderr et close pour obtenir 
+//les résultats de la commande et les afficher dans 
+//la console.
+
+const { spawn } = require('child_process');
+
+function runBackgroundProcess(command, args) {
+    const child = spawn(command, args);
+    child.stdout.on('data', (data) => {
+        console.log(`stdout: ${data}`);
+    });
+    child.stderr.on('data', (data) => {
+        console.error(`stderr: ${data}`);
+    });
+    child.on('close', (code) => {
+        console.log(`child process exited with code ${code}`);
+    });
+}*/
+/* Quitter en appuyant sur ctrl + p
+
+Ce code utilise la fonction readline.createInterface pour créer une interface de 
+//ligne de commande qui lit les entrées de l'utilisateur à partir de process.stdin 
+//et affiche les sorties à process.stdout. En utilisant l'événement line de cette interface, 
+//nous pouvons vérifier si l'entrée de l'utilisateur est égale à \x10 (qui correspond à la combinaison 
+//de touches Ctrl-P) et si c'est le cas, nous sortons du shell en appelant process.exit(). Sinon, on affiche
+// l'entrée de l'utilisateur
+const readline = require('readline');
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
+rl.on('line', (input) => {
+  if (input === '\x10') {
+    console.log('CTRL-P pressed, exiting shell...');
+    process.exit();
+  } else {
+    console.log(`You entered: ${input}`);
+  }
+});
+
+console.log('Welcome to the Node.js shell. Press CTRL-P to exit.');*/
+
+/* 
