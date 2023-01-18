@@ -87,6 +87,10 @@ rl.on('line', (line) => {
                 process.resume();
             }
             break;
+        case 'path' :
+            const path = require('path');
+            console.log(path.sep);                          
+            console.log(path.dirname()); 
         
     }
 })
