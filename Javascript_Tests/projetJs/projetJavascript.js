@@ -90,7 +90,7 @@ rl.on('line', (line) => {
         case 'path' :
             const path = require('path');
             console.log(path.sep);                          
-            console.log(path.dirname()); 
+            console.log(path.dirname('projetJavascript.js')); 
         
     }
 })
