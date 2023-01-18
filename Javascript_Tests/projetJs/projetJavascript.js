@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 const { exec, spawn } = require('child_process');
 const readline = require('readline');
 
@@ -57,6 +58,12 @@ function manageProcess(action, pid) {
             });
             break;
     }
+=======
+while (true) {
+    const path = require('path');
+    console.log(path.sep);                          
+    console.log(path.join('tmp', 'package.json')); 
+>>>>>>> 9c0367d6f6fa266991789d490e5b8f21677b1ac5
 }
 function cdFunc(chemin){
     let child_process = require('child_process');
@@ -76,6 +83,7 @@ function cdFunc(chemin){
     );
 }
 
+<<<<<<< HEAD
 // Boucle infinie pour lire les commandes entrées par l'utilisateur
 const rl = readline.createInterface({
     input: process.stdin,
@@ -119,3 +127,5 @@ rl.on('line', (line) => {
             
     }
 })
+=======
+>>>>>>> 9c0367d6f6fa266991789d490e5b8f21677b1ac5
