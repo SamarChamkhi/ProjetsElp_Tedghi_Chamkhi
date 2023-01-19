@@ -1,5 +1,8 @@
 const { exec, spawn } = require('child_process');
 const readline = require('readline');
+const path = require('path');
+// Récupération de la variable d'environnement PATH
+const envPath = process.env.PATH;
 
 // Tableau pour stocker les informations sur les processus en cours
 let processes = [];
@@ -29,7 +32,7 @@ function listProcesses() {
 // Fonction pour tuer, mettre en pause ou reprendre un processus
 function manageProcess(action, pid) {
     switch (action) {
-        case 'kill':
+        case '-k':
             exec(`sudo kill ${pid}`, (error, stdout, stderr) => {
                 if (error) {
                     console.error(`exec error: ${error}`);
@@ -38,7 +41,7 @@ function manageProcess(action, pid) {
                 console.log(`Process ${pid} killed.`);
             });
             break;
-        case 'pause':
+        case '-p':
             exec(`sudo kill -STOP ${pid}`, (error, stdout, stderr) => {
                 if (error) {
                     console.error(`exec error: ${error}`);
@@ -47,7 +50,7 @@ function manageProcess(action, pid) {
                 console.log(`Process ${pid} paused.`);
             });
             break;
-        case 'continue':
+        case '-c':
             exec(`sudo kill -CONT ${pid}`, (error, stdout, stderr) => {
                 if (error) {
                     console.error(`exec error: ${error}`);
@@ -79,42 +82,39 @@ const rl = readline.createInterface({
 });
 
 rl.prompt();
-
-//Sortir quand on presse CTRL-P
-rl.on('line', (input) => {
-    if (input === '\x10') {
-      console.log('CTRL-P pressé, fermeture du shell...');
-      process.exit();
-    } else {
-      console.log(` vous avez entré : ${input}`);
-    }
-  });
-  
-  console.log('Bienvenue sur le shell Node.js. Pressez CTRL-P pour quitter.');
-
+console.log('Bienvenue sur le shell Node.js. Pressez CTRL-P pour quitter.');
 
 rl.on('line', (line) => {
     let parts = line.trim().split(' ');
     let command = parts[0];
     let args = parts.slice(1);
+    // Récupération du chemin d'accès absolu ou relatif
+    const filePath = line.trim();
+  
+    // Ajout de la variable d'environnement PATH
+    process.env.PATH = `${filePath}:${envPath}`;
+    
+    exec(filePath, (err, stdout, stderr) => {
+        if (err) {
+          console.error(`Error: ${err}`);
+          return;
+        }
+        console.log(`Output: ${stdout}`);
+      });
 
     switch (command) {
+        //Sortir quand on presse CTRL-P (pour l'instant ca ne marche pas c'est peut être à cause de VS)
+        case '\x10':
+            console.log('CTRL-P pressé, fermeture du shell...');
+            process.exit();
+            break
         case 'lp':
             listProcesses();
             break;
         case 'bing':
             let action = args[0];
             let pid = args[1];
-            if (action === '-k'){
-                console.log('k')
-                manageProcess('kill',pid) //process.kill(pid);
-            }else if(action === '-p'){
-                console.log('p')
-               manageProcess('pause',pid) //process.suspend(pid);
-            }else if(action === '-c'){
-                console.log('c')
-                manageProcess('continue',pid) //process.resume(pid); 
-            }
+            manageProcess(action,pid) //process.kill(pid);
             break;
         case 'path' : //pas demandé, affiche l'endroit ou le fichier est.
             const path = require('path');
@@ -132,7 +132,7 @@ rl.on('line', (line) => {
     }
 })
 
-/*//fct pour cd
+/*//fct pour cd option 0:
 const { exec } = require('child_process');
 
 function changeDirectory(dir) {
@@ -151,7 +151,7 @@ changeDirectory('/path/to/directory')
   .catch(console.error);
 //fct pour cd*/
 
-/*autre code trouvé : si ça marche pas :
+/*autre code trouvé : si ça marche pas option 1:
 function changeDirectory(dir){
     exec('ps -e', (error, stdout, stderr) => {
         if (error) {
@@ -174,6 +174,45 @@ function changeDirectory(dir){
             },
         );
     }*/
+
+    /*option 3 : Ce code utilise les modules readline pour créer une interface de lecture 
+    de ligne, child_process pour exécuter un programme en utilisant exec() et path pour traiter
+    les chemins d'accès. Il récupère la variable d'environnement PATH de l'utilisateur au démarrage, 
+    puis utilise la méthode on pour écouter les entrées de l'utilisateur, récupérer le chemin d'accès absolu ou 
+    relatif et exécuter le programme. Il utilise la variable d'environnement PATH pour s'assurer que le programme 
+    est bien exécuté quelque soit l'emplacement.
+
+const readline = require('readline');
+const { exec } = require('child_process');
+const path = require('path');
+
+// Récupération de la variable d'environnement PATH
+const envPath = process.env.PATH;
+
+// Création de l'interface de lecture de ligne
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
+// Boucle de lecture de ligne
+rl.on('line', (input) => {
+  // Récupération du chemin d'accès absolu ou relatif
+  const filePath = input.trim();
+  
+  // Ajout de la variable d'environnement PATH
+  process.env.PATH = `${filePath}:${envPath}`;
+  
+  // Exécution du programme
+  exec(filePath, (err, stdout, stderr) => {
+    if (err) {
+      console.error(`Error: ${err}`);
+      return;
+    }
+    console.log(`Output: ${stdout}`);
+  });
+});
+*/
 
 /*fct pour tache de fond : option 1
 //Dans cet exemple, la fonction runBackgroundProcess() 
@@ -242,4 +281,54 @@ rl.on('line', (input) => {
 });
 
 console.log('Welcome to the Node.js shell. Press CTRL-P to exit.');*/
+
+/*Voici un exemple de code qui crée un shell en Node.js qui peut détacher des processus en 
+cours d'exécution en utilisant la commande keep <processId> :
+
+const readline = require('readline');
+const { exec } = require('child_process');
+
+// Création de l'interface de lecture de ligne
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
+// Tableau pour stocker les processus à détacher
+const detachedProcesses = [];
+
+// Boucle de lecture de ligne
+rl.on('line', (input) => {
+  // Récupération de la commande et de l'ID de processus
+  const [command, processId] = input.trim().split(' ');
+
+  if (command === 'keep') {
+    // Vérifier que l'ID de processus est un nombre
+    if (isNaN(processId)) {
+      console.log(`Error: ${processId} is not a valid process ID.`);
+      return;
+    }
+
+    // Exécution de la commande détacher en utilisant l'option 'disown' pour détacher le processus
+    exec(`disown ${processId}`, (err) => {
+      if (err) {
+        console.error(`Error: ${err}`);
+        return;
+      }
+
+      // Ajout de l'ID de processus au tableau des processus détachés
+      detachedProcesses.push(processId);
+      console.log(`Process ${processId} has been detached.`);
+    });
+  } else {
+    console.log(`Unknown command: ${command}`);
+  }
+});
+Ce code utilise les modules readline pour créer une interface de lecture de ligne, child_process pour 
+exécuter une commande en utilisant exec(). Il utilise la méthode on pour écouter les entrées de l'utilisateur, 
+vérifie si la commande est "keep" et extrait l'ID de processus. Il vérifie si l'ID de processus est un nombre valide, 
+ensuite exécute la commande disown pour détacher le processus. Il ajoute également l'ID de processus détaché dans un 
+tableau pour une référence future.*/
+
+
 
