@@ -58,28 +58,19 @@ function manageProcess(action, pid) {
             break;
     }
 }
-function cdFunc(chemin){
-    exec('ps -e', (error, stdout, stderr) => {
+
+function changeDirectory(dir) {
+    //dir = 'testCd';
+    return new Promise((resolve, reject) => {
+        exec(`cd ${dir}`, (error, stdout, stderr) => {
         if (error) {
-            console.error(`exec error: ${error}`);
-            return;
+            reject(error);
         }
-        let child_process = require('child_process');
-        child_process.spawn(
-            // With this variable we know we use the same shell as the one that started this process
-            process.env.SHELL,
-            {
-            // Change the cwd
-            cwd: `${process.cwd()} chemin ${product_id}`,
-        
-            // This makes this process "take over" the terminal
-            stdio: 'inherit',
-        
-            // If you want, you can also add more environment variables here, but you can also remove this line
-            //env: { ...process.env, extra_environment: chemin },
-            },
-        );
-    }
+        resolve(stdout);
+        });
+    });
+}
+
 
 // Boucle infinie pour lire les commandes entrées par l'utilisateur
 const rl = readline.createInterface({
@@ -87,8 +78,21 @@ const rl = readline.createInterface({
     output: process.stdout
 });
 
-console.log('Welcome to the Node.js shell.');
 rl.prompt();
+
+//Sortir quand on presse CTRL-P
+rl.on('line', (input) => {
+    if (input === '\x10') {
+      console.log('CTRL-P pressé, fermeture du shell...');
+      process.exit();
+    } else {
+      console.log(` vous avez entré : ${input}`);
+    }
+  });
+  
+  console.log('Bienvenue sur le shell Node.js. Pressez CTRL-P pour quitter.');
+
+
 rl.on('line', (line) => {
     let parts = line.trim().split(' ');
     let command = parts[0];
@@ -120,7 +124,10 @@ rl.on('line', (line) => {
             //let processId = args[0];
             break;
         case 'cd':
-            cdFunc(args[0]);
+            let chemin = toString(args[0]);
+            changeDirectory(chemin)
+                .then(console.log)
+                .catch(console.error);
             
     }
 })
@@ -144,7 +151,31 @@ changeDirectory('/path/to/directory')
   .catch(console.error);
 //fct pour cd*/
 
-/*fct pour tache de fond : 
+/*autre code trouvé : si ça marche pas :
+function changeDirectory(dir){
+    exec('ps -e', (error, stdout, stderr) => {
+        if (error) {
+            console.error(`exec error: ${error}`);
+            return;
+        }
+        let child_process = require('child_process');
+        child_process.spawn(
+            // With this variable we know we use the same shell as the one that started this process
+            process.env.SHELL,
+            {
+            // Change the cwd
+            cwd: `${process.cwd()} chemin ${product_id}`,
+        
+            // This makes this process "take over" the terminal
+            stdio: 'inherit',
+        
+            // If you want, you can also add more environment variables here, but you can also remove this line
+            //env: { ...process.env, extra_environment: chemin },
+            },
+        );
+    }*/
+
+/*fct pour tache de fond : option 1
 //Dans cet exemple, la fonction runBackgroundProcess() 
 //prend une commande en argument et l'exécute en 
 //utilisant exec(). 
@@ -183,6 +214,9 @@ function runBackgroundProcess(command, args) {
         console.log(`child process exited with code ${code}`);
     });
 }*/
+
+
+
 /* Quitter en appuyant sur ctrl + p
 
 Ce code utilise la fonction readline.createInterface pour créer une interface de 
@@ -209,4 +243,3 @@ rl.on('line', (input) => {
 
 console.log('Welcome to the Node.js shell. Press CTRL-P to exit.');*/
 
-/* 
