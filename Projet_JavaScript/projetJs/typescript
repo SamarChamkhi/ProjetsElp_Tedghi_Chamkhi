@@ -1,0 +1,10 @@
+Script démarré sur 2023-01-23 14:52:04+01:00 [<pas exécuté sur le terminal>]
+User disabled 'du check'. Enable : rm -f /home/ntedghi/skip_du_check_insa
+or recalc manually : du -shx ~
+Remember: 9G max (ncdu -x ~ to do some graphical pre-cleaning...)
+...et VIDEZ la corbeille régulièrement...!
+
+
+]0;ntedghi@tc405-114-02: ~/Documents/GoProjet/ProjetGo_ProduitMatriciel/Projet_JavaScript/projetJs[01;32mntedghi@tc405-114-02[00m:[01;34m~/Documents/GoProjet/ProjetGo_ProduitMatriciel/Projet_JavaScript/projetJs[00m$ exit
+
+Script terminé sur 2023-01-23 14:56:33+01:00 [COMMAND_EXIT_CODE="0"]

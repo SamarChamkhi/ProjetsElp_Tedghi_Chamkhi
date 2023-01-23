@@ -88,6 +88,20 @@ function execProg(prog){
     console.log(`stderr: ${stderr}`);
   });
 }
+
+let detachedProcesses = [];
+//Détacher certains processus du CLIi
+function detache(processId) {
+  exec(`disown ${processId}`, {stdio:'inherit'}, (err) => {
+    if (err) {
+      console.error(`Error: ${err}`);
+      return;
+    }
+    // Add the process ID to the array of detached processes
+    detachedProcesses.push(processId);
+    console.log(`Process ${processId} has been detached.`);
+  });
+}
 //écoute du clavier pour fermer sur CTRL P
 var clavier = process.stdin;
     
@@ -142,32 +156,22 @@ rl.on('line', (line) => {
               console.log(module.paths[0]);
               break;
           case 'keep':
-              let processId = args[0];
+            processId=args[0]
+            // Vérifier que l'ID de processus est un nombre
+            if (isNaN(processId)) {
+              console.log(`Error: ${processId} is not a valid process ID.`);
+              return;
+            }else{
+              detache(processId);
+            }
+              //let processId = args[0];
       }
     }
 })
 
 
-// Boucle infinie pour lire les commandes entrées par l'utilisateur
 
 /*fct pour tache de fond : option 1
-//Dans cet exemple, la fonction runBackgroundProcess() 
-//prend une commande en argument et l'exécute en 
-//utilisant exec(). 
-//La fonction retourne les résultats de la commande 
-//(stdout) dans la console.
-const { exec } = require('child_process');
-
-function runBackgroundProcess(command) {
-    exec(command, (error, stdout, stderr) => {
-        if (error) {
-            console.error(`Error: ${error}`);
-            return;
-        }
-        console.log(`Output: ${stdout}`);
-    });
-}*/
-/*option n 2 : 
 Dans cet exemple, la fonction runBackgroundProcess() 
 //prend en argument une commande et des arguments, 
 //et l'exécute en utilisant spawn(). La fonction écoute 
