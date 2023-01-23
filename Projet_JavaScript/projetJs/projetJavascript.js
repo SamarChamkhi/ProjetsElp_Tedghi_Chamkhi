@@ -63,18 +63,30 @@ function manageProcess(action, pid) {
             break;
     }
 }
-
-//ne fonctionne pas encore
-function changeDirectory(dir) {
-    //dir = 'testCd';
-    return new Promise((resolve, reject) => {
-        exec(`cd ${dir}`, (error, stdout, stderr) => {
-        if (error) {
-            reject(error);
-        }
-        resolve(stdout);
-        });
+function execProg(prog){
+  let path = prog;
+  // Check if the input is not a path or name, search in PATH
+  if (!prog.match(/^[\/~]|[a-zA-Z]:\\/)) {
+    path = process.env.PATH.split(':').map(folder => `${folder}/${prog}`).find(p => {
+      try {
+        return require('fs').lstatSync(p).isFile();
+      } catch (e) {
+        return false;
+      }
     });
+    if (!path) {
+      console.log(`Program ${prog} not found`);
+      return;
+    }
+  }
+  exec(path, (error, stdout, stderr) => {
+    if (error) {
+      console.error(`exec error: ${error}`);
+      return;
+    }
+    console.log(`stdout: ${stdout}`);
+    console.log(`stderr: ${stderr}`);
+  });
 }
 //écoute du clavier pour fermer sur CTRL P
 var clavier = process.stdin;
@@ -106,13 +118,17 @@ rl.on('line', (line) => {
     const filePath = line.trim();
 
     if(testPoint.test(command)){
-      console.log(command + "lancé en arrière plan")
+      console.log(command.slice(0,-1) + " lancé en arrière plan")
       console.log(command.slice(0,-1))
       const backgroundProcess = spawn('node', [command.slice(0,-1)], { detached: true, stdio: 'ignore' });
-      //backgroundProcess.unref();
+      backgroundProcess.unref();
       //runBackgroundProcess(command);
     }else{
       switch (command) {
+          case 'exec':
+              let prog = args[0]
+              execProg(prog);
+              break
           case 'lp':
               listProcesses();
               break;
@@ -126,14 +142,7 @@ rl.on('line', (line) => {
               console.log(module.paths[0]);
               break;
           case 'keep':
-              //let processId = args[0];
-              break;
-          case 'cd':
-              let chemin = toString(args[0]);
-              changeDirectory(chemin)
-                  .then(console.log)
-                  .catch(console.error);
-                        
+              let processId = args[0];
       }
     }
 })
@@ -141,7 +150,6 @@ rl.on('line', (line) => {
 
 // Boucle infinie pour lire les commandes entrées par l'utilisateur
 
-/
 /*fct pour tache de fond : option 1
 //Dans cet exemple, la fonction runBackgroundProcess() 
 //prend une commande en argument et l'exécute en 
