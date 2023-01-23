@@ -141,71 +141,7 @@ rl.on('line', (line) => {
 
 // Boucle infinie pour lire les commandes entrées par l'utilisateur
 
-/*//fct pour cd option 0:
-const { exec } = require('child_process');
-
-function changeDirectory(dir) {
-  return new Promise((resolve, reject) => {
-    exec(`cd ${dir}`, (error, stdout, stderr) => {
-      if (error) {
-        reject(error);
-      }
-      resolve(stdout);
-    });
-  });console.log('CTRL-P pressé, fermeture du shell...');
-}
-
-changeDirectory('/path/to/directory')
-  .then(console.log)
-  .catch(console.error);
-//fct pour cd*/
-
-/*autre code trouvé : si ça marche pas option 1:
-function changeDirectory(dir){
-    exec('ps -e', (error, stdout, stderr) => {
-        if (error) {
-            console.error(`exec error: ${error}`);
-            return;
-        }
-        let child_process = require('child_process');
-        child_process.spawn(
-            // With this variable we know we use the same shell as the one that started this process
-            process.env.SHELL,
-            {
-            // Change the cwd
-            cwd: `${process.cwd()} chemin ${product_id}`,
-        
-            // This makes this process "take over" the terminal
-            stdio: 'inherit',
-        
-            // If you want, you can also add more environment variables here, but you can also remove this line
-            //env: { ...process.env, extra_environment: chemin },
-            },
-        );
-    }*/
-
-    /*option 3 : Ce code utilise les modules readline pour créer une interface de lecture 
-    de ligne, child_process pour exécuter un programme en utilisant exec() et path pour traiter
-    les chemins d'accès. Il récupère la variable d'environnement PATH de l'utilisateur au démarrage, 
-    puis utilise la méthode on pour écouter les entrées de l'utilisateur, récupérer le chemin d'accès absolu ou 
-    relatif et exécuter le programme. Il utilise la variable d'environnement PATH pour s'assurer que le programme 
-    est bien exécuté quelque soit l'emplacement.
-
-const readline = require('readline');
-const { exec } = require('child_process');
-const path = require('path');
-
-// Récupération de la variable d'environnement PATH
-const envPath = process.env.PATH;
-
-// Création de l'interface de lecture de ligne
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
-
-
-
+/
 /*fct pour tache de fond : option 1
 //Dans cet exemple, la fonction runBackgroundProcess() 
 //prend une commande en argument et l'exécute en 
@@ -316,9 +252,4 @@ vérifie si la commande est "keep" et extrait l'ID de processus. Il vérifie si 
 ensuite exécute la commande disown pour détacher le processus. Il ajoute également l'ID de processus détaché dans un 
 tableau pour une référence future.*/
 
-/*          //Sortir quand on presse CTRL-P (pour l'instant ca ne marche pas c'est peut être à cause de VS)
-          case '\u0010':
-              console.log('CTRL-P pressé, fermeture du shell...');
-              process.exit();
-              break*/
 
