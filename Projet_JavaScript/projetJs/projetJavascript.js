@@ -28,7 +28,6 @@ function listProcesses() {
         }
     });
 }
-//On a mis 'sudo' mais pas sûres de l'utilité on n'a pas pu tester car on n'est pas sudo sur les machines INSA
 // Fonction pour tuer, mettre en pause ou reprendre un processus
 function manageProcess(action, pid) {
     switch (action) {
@@ -47,7 +46,7 @@ function manageProcess(action, pid) {
                     console.error(`exec error: ${error}`);
                     return;
                 }
-                console.log(`Process ${pid} paused.`);
+                console.log(`Process ${pid} mis en pause.`);
             });
             break;
         case '-c':
@@ -56,14 +55,15 @@ function manageProcess(action, pid) {
                     console.error(`exec error: ${error}`);
                     return;
                 }
-                console.log(`Process ${pid} resumed.`);
+                console.log(`Process ${pid} a repris.`);
             });
             break;
     }
 }
+
 function execProg(prog){
   let path = prog;
-  // Check if the input is not a path or name, search in PATH
+  // Check si l'entrée n'est pas un path ou un nom, cherche dans PATH
   if (!prog.match(/^[\/~]|[a-zA-Z]:\\/)) {
     path = process.env.PATH.split(':').map(folder => `${folder}/${prog}`).find(p => {
       try {
@@ -73,7 +73,7 @@ function execProg(prog){
       }
     });
     if (!path) {
-      console.log(`Program ${prog} not found`);
+      console.log(`Programme ${prog} non trouvé`);
       return;
     }
   }
@@ -90,14 +90,14 @@ function execProg(prog){
 let detachedProcesses = [];
 //Détacher certains processus du CLIi
 function detache(processId) {
-  exec(`disown ${processId}`, {stdio:'inherit'}, (err) => {
+  exec(`nohup kill -s SIGHUP ${processId}`, (err) => {
     if (err) {
       console.error(`Error: ${err}`);
       return;
     }
-    // Add the process ID to the array of detached processes
+    // Ajoute le process ID au tableau des process détachés
     detachedProcesses.push(processId);
-    console.log(`Process ${processId} has been detached.`);
+    console.log(`Process ${processId} a été détaché.`);
   });
 }
 //écoute du clavier pour fermer sur CTRL P
