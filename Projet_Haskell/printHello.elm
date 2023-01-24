@@ -9,6 +9,7 @@ import Json.Decode exposing (Decoder, map2, list, field, string)
 
 
 -- MAIN
+
 main =
   Browser.element
     { init = init
@@ -92,11 +93,6 @@ viewMeaning meaning =
         [ text meaning.partOfSpeech        
         , ul [] (List.map viewDefinition meaning.definitions)
         ]
-
-
-
-
-
 
 --Norm
 
