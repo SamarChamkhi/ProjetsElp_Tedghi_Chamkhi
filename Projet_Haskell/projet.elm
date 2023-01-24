@@ -1,82 +1,36 @@
-import Browser
-import Html exposing (Html, text, pre)
-import Http
-
-
-
--- MAIN
-
+import Html exposing (..)
+import File
 
 main =
-  Browser.element
-    { init = init
-    , update = update
-    , subscriptions = subscriptions
-    , view = view
-    }
+    File.read "words.txt" GotFile
 
-
-
--- MODEL
-
-
-type Model
-  = Failure
-  | Loading
-  | Success String
-
-
-init : () -> (Model, Cmd Msg)
-init _ =
-  ( Loading
-  , Http.get
-      { url = "https://api.dictionaryapi.dev/api/v2/entries/en/hello"
-      , expect = Http.expectString GotText
-      }
-  )
-
-
-
--- UPDATE
-
-
-type Msg
-  = GotText (Result Http.Error String)
-
-
-update : Msg -> Model -> (Model, Cmd Msg)
-update msg model =
-  case msg of
-    GotText result ->
-      case result of
-        Ok fullText ->
-          (Success fullText, Cmd.none)
-
-        Err _ ->
-          (Failure, Cmd.none)
-
-
-
--- SUBSCRIPTIONS
-
-
-subscriptions : Model -> Sub Msg
-subscriptions model =
-  Sub.none
-
-
-
--- VIEW
-
+type Msg 
+    = GotFile (Result File.Error String)
 
 view : Model -> Html Msg
 view model =
-  case model of
-    Failure ->
-      text "I was unable to load your book."
+    case model of
+        Loading -> text "Loading..."
+        Failure -> text "An error occured"
+        Success words ->
+            ul [] (List.map (\word -> li [] [text word]) words)
 
-    Loading ->
-      text "Loading..."
+update : Msg -> Model -> (Model, Cmd Msg)
+update msg model =
+    case msg of
+        GotFile (Ok content) ->
+            let
+                words = String.split "\n" content
+            in
+            (Success words, Cmd.none)
+        GotFile (Err _) ->
+            (Failure, Cmd.none)
 
-    Success fullText ->
-      pre [] [ text fullText ]
+init : () -> (Model, Cmd Msg)
+init _ =
+    (Loading, getRandomWordFromFile)
+
+subscriptions : Model -> Sub Msg
+subscriptions _ =
+    Sub.none
+
