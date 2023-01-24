@@ -100,6 +100,19 @@ function detache(processId) {
     console.log(`Process ${processId} a été détaché.`);
   });
 }
+function runBackgroundProcess(command){
+  exec(`${command} &`, (err) => {
+    if (err) {
+      console.error(`Error: ${err}`);
+      return;
+    }else{
+      console.log(command+ " lancé en arrière plan")
+    }
+    // Ajoute la commande au tableau des process détachés
+    detachedProcesses.push(command);
+  });
+}
+
 //écoute du clavier pour fermer sur CTRL P
 var clavier = process.stdin;
     
@@ -130,11 +143,7 @@ rl.on('line', (line) => {
     const filePath = line.trim();
 
     if(testPoint.test(command)){
-      console.log(command.slice(0,-1) + " lancé en arrière plan")
-      console.log(command.slice(0,-1))
-      const backgroundProcess = spawn('node', [command.slice(0,-1)], { detached: true, stdio: 'ignore' });
-      backgroundProcess.unref();
-      //runBackgroundProcess(command);
+      runBackgroundProcess(command.slice(0,-1));
     }else{
       switch (command) {
           case 'exec':
@@ -157,7 +166,7 @@ rl.on('line', (line) => {
             let processId=args[0]
             // Vérifier que l'ID de processus est un nombre
             if (isNaN(processId)) {
-              console.log(`Error: ${processId} is not a valid process ID.`);
+              console.log(`Error: ${processId} n'est pas un process ID valide.`);
               return;
             }else{
               detache(processId);
