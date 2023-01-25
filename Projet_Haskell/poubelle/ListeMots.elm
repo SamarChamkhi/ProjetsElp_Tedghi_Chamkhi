@@ -9,3 +9,4 @@ words = String.split " " "a anywhere below burn climb able apartment bend bus cl
 
 main =
     ul [] (List.map (\word -> li [] [text word]) words)
+

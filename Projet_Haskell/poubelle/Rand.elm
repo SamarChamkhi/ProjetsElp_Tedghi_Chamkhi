@@ -8,6 +8,8 @@ import Browser
 import Html exposing (..)
 import Html.Events exposing (..)
 import Random
+import String
+import ListeMots exposing(..)
 
 
 
@@ -19,7 +21,6 @@ main =
     { init = init
     , update = update
     , subscriptions = subscriptions
-    , view = view
     }
 
 
@@ -69,15 +70,3 @@ update msg model =
 subscriptions : Model -> Sub Msg
 subscriptions model =
   Sub.none
-
-
-
--- VIEW
-
-
-view : Model -> Html Msg
-view model =
-  div []
-    [ h1 [] [ text (String.fromInt model.dieFace) ]
-    , button [ onClick Roll ] [ text "Roll" ]
-    ]

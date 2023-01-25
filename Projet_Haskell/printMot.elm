@@ -1,5 +1,4 @@
-module PrintHello exposing (..)
-
+module PrintMot exposing (..)
 import Browser
 import Html exposing (..)
 import Html.Attributes exposing (value)
@@ -36,6 +35,12 @@ type alias Meaning =
 type alias Definition =
     { definition : String
     }
+
+type Msg
+    = FindRandom
+    | RandomNumber Int
+    | GotText (Result Http.Error String)
+
 
 init : () -> (Model, Cmd Msg)
 init _ =
@@ -95,6 +100,24 @@ viewMeaning meaning =
         ]
 
 --Norm
+RandomFunction : Msg -> String
+RandomFunction msg = 
+    case msg of
+        FindRandom ->
+            ( Random.generate RandomNumber (Random.int 0 (List.length model.list - 1)))
+        RandomNumber rn ->
+            let
+                selected = Array.fromList model.list
+                    |> Array.get rn
+            in
+                ({ model | selected = selected })
+        GotText result ->
+          case result of
+            Ok fullText ->
+              ({ model | list = textToList fullText}, Cmd.none)
+            Err _ ->
+              (model, Cmd.none)
+
 
 viewDefinition : Definition -> Html Msg
 viewDefinition def =
@@ -104,7 +127,7 @@ viewDefinition def =
 getWord : Cmd Msg
 getWord =
     Http.get
-    { url = "https://api.dictionaryapi.dev/api/v2/entries/en/hello"
+    { url = "https://api.dictionaryapi.dev/api/v2/entries/en/"++Random.generate RandomNumber (Random.int 0 (List.length model.list - 1))
     , expect = Http.expectJson GotWord descriptionDecoder
     }
 

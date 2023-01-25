@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Test3</title>
+  <title>PrintHello</title>
   <style>body { padding: 0; margin: 0; }</style>
 </head>
 
@@ -5348,45 +5348,45 @@ var $elm$core$Task$perform = F2(
 				A2($elm$core$Task$map, toMessage, task)));
 	});
 var $elm$browser$Browser$element = _Browser_element;
-var $author$project$Test3$Loading = {$: 'Loading'};
-var $author$project$Test3$GotWord = function (a) {
+var $author$project$PrintHello$Loading = {$: 'Loading'};
+var $author$project$PrintHello$GotWord = function (a) {
 	return {$: 'GotWord', a: a};
 };
 var $elm$json$Json$Decode$list = _Json_decodeList;
-var $author$project$Test3$Word = F2(
+var $author$project$PrintHello$Word = F2(
 	function (word, meanings) {
 		return {meanings: meanings, word: word};
 	});
 var $elm$json$Json$Decode$field = _Json_decodeField;
-var $author$project$Test3$Meaning = F2(
+var $author$project$PrintHello$Meaning = F2(
 	function (partOfSpeech, definitions) {
 		return {definitions: definitions, partOfSpeech: partOfSpeech};
 	});
-var $author$project$Test3$Definition = function (definition) {
+var $author$project$PrintHello$Definition = function (definition) {
 	return {definition: definition};
 };
 var $elm$json$Json$Decode$string = _Json_decodeString;
-var $author$project$Test3$definitionDecoder = A2(
+var $author$project$PrintHello$definitionDecoder = A2(
 	$elm$json$Json$Decode$map,
-	$author$project$Test3$Definition,
+	$author$project$PrintHello$Definition,
 	A2($elm$json$Json$Decode$field, 'definition', $elm$json$Json$Decode$string));
-var $author$project$Test3$meaningDecoder = A3(
+var $author$project$PrintHello$meaningDecoder = A3(
 	$elm$json$Json$Decode$map2,
-	$author$project$Test3$Meaning,
+	$author$project$PrintHello$Meaning,
 	A2($elm$json$Json$Decode$field, 'partOfSpeech', $elm$json$Json$Decode$string),
 	A2(
 		$elm$json$Json$Decode$field,
 		'definitions',
-		$elm$json$Json$Decode$list($author$project$Test3$definitionDecoder)));
-var $author$project$Test3$wordDecoder = A3(
+		$elm$json$Json$Decode$list($author$project$PrintHello$definitionDecoder)));
+var $author$project$PrintHello$wordDecoder = A3(
 	$elm$json$Json$Decode$map2,
-	$author$project$Test3$Word,
+	$author$project$PrintHello$Word,
 	A2($elm$json$Json$Decode$field, 'word', $elm$json$Json$Decode$string),
 	A2(
 		$elm$json$Json$Decode$field,
 		'meanings',
-		$elm$json$Json$Decode$list($author$project$Test3$meaningDecoder)));
-var $author$project$Test3$descriptionDecoder = $elm$json$Json$Decode$list($author$project$Test3$wordDecoder);
+		$elm$json$Json$Decode$list($author$project$PrintHello$meaningDecoder)));
+var $author$project$PrintHello$descriptionDecoder = $elm$json$Json$Decode$list($author$project$PrintHello$wordDecoder);
 var $elm$json$Json$Decode$decodeString = _Json_runOnString;
 var $elm$http$Http$BadStatus_ = F2(
 	function (a, b) {
@@ -6174,35 +6174,35 @@ var $elm$http$Http$get = function (r) {
 	return $elm$http$Http$request(
 		{body: $elm$http$Http$emptyBody, expect: r.expect, headers: _List_Nil, method: 'GET', timeout: $elm$core$Maybe$Nothing, tracker: $elm$core$Maybe$Nothing, url: r.url});
 };
-var $author$project$Test3$getWord = $elm$http$Http$get(
+var $author$project$PrintHello$getWord = $elm$http$Http$get(
 	{
-		expect: A2($elm$http$Http$expectJson, $author$project$Test3$GotWord, $author$project$Test3$descriptionDecoder),
+		expect: A2($elm$http$Http$expectJson, $author$project$PrintHello$GotWord, $author$project$PrintHello$descriptionDecoder),
 		url: 'https://api.dictionaryapi.dev/api/v2/entries/en/hello'
 	});
-var $author$project$Test3$init = function (_v0) {
-	return _Utils_Tuple2($author$project$Test3$Loading, $author$project$Test3$getWord);
+var $author$project$PrintHello$init = function (_v0) {
+	return _Utils_Tuple2($author$project$PrintHello$Loading, $author$project$PrintHello$getWord);
 };
 var $elm$core$Platform$Sub$batch = _Platform_batch;
 var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
-var $author$project$Test3$subscriptions = function (model) {
+var $author$project$PrintHello$subscriptions = function (model) {
 	return $elm$core$Platform$Sub$none;
 };
-var $author$project$Test3$Failure = {$: 'Failure'};
-var $author$project$Test3$Success = function (a) {
+var $author$project$PrintHello$Failure = {$: 'Failure'};
+var $author$project$PrintHello$Success = function (a) {
 	return {$: 'Success', a: a};
 };
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
-var $author$project$Test3$update = F2(
+var $author$project$PrintHello$update = F2(
 	function (msg, model) {
 		if (msg.a.$ === 'Ok') {
 			var words = msg.a.a;
 			return _Utils_Tuple2(
-				$author$project$Test3$Success(words),
+				$author$project$PrintHello$Success(words),
 				$elm$core$Platform$Cmd$none);
 		} else {
 			var error = msg.a.a;
-			return _Utils_Tuple2($author$project$Test3$Failure, $elm$core$Platform$Cmd$none);
+			return _Utils_Tuple2($author$project$PrintHello$Failure, $elm$core$Platform$Cmd$none);
 		}
 	});
 var $elm$html$Html$div = _VirtualDom_node('div');
@@ -6211,7 +6211,7 @@ var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
 var $elm$html$Html$ul = _VirtualDom_node('ul');
 var $elm$html$Html$li = _VirtualDom_node('li');
-var $author$project$Test3$viewDefinition = function (def) {
+var $author$project$PrintHello$viewDefinition = function (def) {
 	return A2(
 		$elm$html$Html$li,
 		_List_Nil,
@@ -6220,7 +6220,7 @@ var $author$project$Test3$viewDefinition = function (def) {
 				$elm$html$Html$text(def.definition)
 			]));
 };
-var $author$project$Test3$viewMeaning = function (meaning) {
+var $author$project$PrintHello$viewMeaning = function (meaning) {
 	return A2(
 		$elm$html$Html$li,
 		_List_Nil,
@@ -6230,10 +6230,10 @@ var $author$project$Test3$viewMeaning = function (meaning) {
 				A2(
 				$elm$html$Html$ul,
 				_List_Nil,
-				A2($elm$core$List$map, $author$project$Test3$viewDefinition, meaning.definitions))
+				A2($elm$core$List$map, $author$project$PrintHello$viewDefinition, meaning.definitions))
 			]));
 };
-var $author$project$Test3$viewWordMeaning = function (word) {
+var $author$project$PrintHello$viewWordMeaning = function (word) {
 	return A2(
 		$elm$html$Html$div,
 		_List_Nil,
@@ -6242,10 +6242,10 @@ var $author$project$Test3$viewWordMeaning = function (word) {
 				A2(
 				$elm$html$Html$ul,
 				_List_Nil,
-				A2($elm$core$List$map, $author$project$Test3$viewMeaning, word.meanings))
+				A2($elm$core$List$map, $author$project$PrintHello$viewMeaning, word.meanings))
 			]));
 };
-var $author$project$Test3$viewWord = function (model) {
+var $author$project$PrintHello$viewWord = function (model) {
 	switch (model.$) {
 		case 'Failure':
 			return A2(
@@ -6262,10 +6262,10 @@ var $author$project$Test3$viewWord = function (model) {
 			return A2(
 				$elm$html$Html$div,
 				_List_Nil,
-				A2($elm$core$List$map, $author$project$Test3$viewWordMeaning, words));
+				A2($elm$core$List$map, $author$project$PrintHello$viewWordMeaning, words));
 	}
 };
-var $author$project$Test3$view = function (model) {
+var $author$project$PrintHello$view = function (model) {
 	return A2(
 		$elm$html$Html$div,
 		_List_Nil,
@@ -6278,15 +6278,15 @@ var $author$project$Test3$view = function (model) {
 					[
 						$elm$html$Html$text('Word Definitions')
 					])),
-				$author$project$Test3$viewWord(model)
+				$author$project$PrintHello$viewWord(model)
 			]));
 };
-var $author$project$Test3$main = $elm$browser$Browser$element(
-	{init: $author$project$Test3$init, subscriptions: $author$project$Test3$subscriptions, update: $author$project$Test3$update, view: $author$project$Test3$view});
-_Platform_export({'Test3':{'init':$author$project$Test3$main(
+var $author$project$PrintHello$main = $elm$browser$Browser$element(
+	{init: $author$project$PrintHello$init, subscriptions: $author$project$PrintHello$subscriptions, update: $author$project$PrintHello$update, view: $author$project$PrintHello$view});
+_Platform_export({'PrintHello':{'init':$author$project$PrintHello$main(
 	$elm$json$Json$Decode$succeed(_Utils_Tuple0))(0)}});}(this));
 
-  var app = Elm.Test3.init({ node: document.getElementById("elm") });
+  var app = Elm.PrintHello.init({ node: document.getElementById("elm") });
 }
 catch (e)
 {
