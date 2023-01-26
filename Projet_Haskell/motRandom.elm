@@ -1,6 +1,5 @@
 module Test7 exposing (..)
 
-
 import Browser
 import Html exposing (Html, button, div, text)
 import Html.Events exposing (onClick)
@@ -14,7 +13,6 @@ type alias Char =
 
 type alias Flags = 
     {  }
-
 
 type alias Model =
     { selected : Maybe String
