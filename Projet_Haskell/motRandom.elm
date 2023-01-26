@@ -81,7 +81,6 @@ init flags =
       }
     )
 
-
 main : Program Flags Model Msg
 main =
     Browser.element

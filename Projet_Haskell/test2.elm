@@ -29,7 +29,7 @@ type R
 
 -- MODEL
 type alias Model =
-   {mot: String, items:List String, sucess:R, guess: String}
+   {mot: String, items:List String, sucess:R, guess: String, reveal:Bool}
 
 
 type alias Word =
@@ -48,7 +48,7 @@ type alias Definition =
 -- INIT
 init : () -> (Model, Cmd Msg)
 init _ =
-  ( Model "" [] Loading ""
+  ( Model "" [] Loading "" False
   , Http.get
       { url = "http://localhost:8000/Mots/words.txt"
       , expect = Http.expectString GotText
@@ -62,6 +62,7 @@ type Msg
   | Num Int
   | Reload
   | Guess String
+  | Reveal Bool
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -97,9 +98,11 @@ update msg model =
       init()
     Guess guess ->
         if guess == model.mot then
-            ({model | guess = "You found the word!"}, Cmd.none)
+            ({model | guess = "Bravo, c'est gagné !!!"}, Cmd.none)
         else
             ({model | guess = guess}, Cmd.none)
+    Reveal reveal ->
+        ({model | reveal = reveal}, Cmd.none)
 
 
 -- SUBSCRIPTIONS
@@ -118,10 +121,11 @@ view model =
 
     Success (mot, words) ->
        div [] [
-         text ("Guess the word : " ++ mot),
+         text ("Guess the word : "++(if model.reveal then mot else " ")),
          div [] (List.map viewWordMeaning words),
          input [ onInput Guess, value model.guess ] [],
-         button [ onClick Reload ] [ text "Reload" ]
+         button [ onClick Reload ] [ text "Reload" ],
+         button [onClick (Reveal True)][text "show the answer"]
        ]
 
 viewWordMeaning : Word -> Html Msg
