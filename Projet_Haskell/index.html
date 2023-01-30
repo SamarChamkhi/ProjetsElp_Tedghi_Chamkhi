@@ -5435,9 +5435,9 @@ var $author$project$Test$GotText = function (a) {
 	return {$: 'GotText', a: a};
 };
 var $author$project$Test$Loading = {$: 'Loading'};
-var $author$project$Test$Model = F4(
-	function (mot, items, sucess, guess) {
-		return {guess: guess, items: items, mot: mot, sucess: sucess};
+var $author$project$Test$Model = F5(
+	function (mot, items, sucess, guess, reveal) {
+		return {guess: guess, items: items, mot: mot, reveal: reveal, sucess: sucess};
 	});
 var $elm$http$Http$BadStatus_ = F2(
 	function (a, b) {
@@ -6220,7 +6220,7 @@ var $elm$http$Http$get = function (r) {
 };
 var $author$project$Test$init = function (_v0) {
 	return _Utils_Tuple2(
-		A4($author$project$Test$Model, '', _List_Nil, $author$project$Test$Loading, ''),
+		A5($author$project$Test$Model, '', _List_Nil, $author$project$Test$Loading, '', false),
 		$elm$http$Http$get(
 			{
 				expect: $elm$http$Http$expectString($author$project$Test$GotText),
@@ -6541,16 +6541,23 @@ var $author$project$Test$update = F2(
 				}
 			case 'Reload':
 				return $author$project$Test$init(_Utils_Tuple0);
-			default:
+			case 'Guess':
 				var guess = msg.a;
 				return _Utils_eq(guess, model.mot) ? _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{guess: 'You found the word!'}),
+						{guess: 'Bravo, c\'est gagné !!!'}),
 					$elm$core$Platform$Cmd$none) : _Utils_Tuple2(
 					_Utils_update(
 						model,
 						{guess: guess}),
+					$elm$core$Platform$Cmd$none);
+			default:
+				var reveal = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{reveal: reveal}),
 					$elm$core$Platform$Cmd$none);
 		}
 	});
@@ -6558,6 +6565,9 @@ var $author$project$Test$Guess = function (a) {
 	return {$: 'Guess', a: a};
 };
 var $author$project$Test$Reload = {$: 'Reload'};
+var $author$project$Test$Reveal = function (a) {
+	return {$: 'Reveal', a: a};
+};
 var $elm$html$Html$button = _VirtualDom_node('button');
 var $elm$html$Html$div = _VirtualDom_node('div');
 var $elm$html$Html$input = _VirtualDom_node('input');
@@ -6672,7 +6682,8 @@ var $author$project$Test$view = function (model) {
 				_List_Nil,
 				_List_fromArray(
 					[
-						$elm$html$Html$text('Guess the word : ' + mot),
+						$elm$html$Html$text(
+						'Guess the word : ' + (model.reveal ? mot : ' ')),
 						A2(
 						$elm$html$Html$div,
 						_List_Nil,
@@ -6694,6 +6705,17 @@ var $author$project$Test$view = function (model) {
 						_List_fromArray(
 							[
 								$elm$html$Html$text('Reload')
+							])),
+						A2(
+						$elm$html$Html$button,
+						_List_fromArray(
+							[
+								$elm$html$Html$Events$onClick(
+								$author$project$Test$Reveal(true))
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('show the answer')
 							]))
 					]));
 	}

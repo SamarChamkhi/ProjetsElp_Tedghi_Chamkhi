@@ -48,6 +48,8 @@ func handleConnection(c net.Conn) {
 
 		temp := strings.TrimSpace(string(netData))
 		if temp == "STOP" {
+			c.Write([]byte("%quit%"))
+			c.Close()
 			break
 		}
 
