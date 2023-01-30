@@ -1,3 +1,4 @@
+IL faut exécuter le fichier "projetJavascript.js".
 Le programme permet de créer un shell en NodeJs. Voici les commandes pour l'utiliser :
 
 - 'lp' permet de lister les processus en cours et leur ID
@@ -10,3 +11,5 @@ Les fonctions précédentes fonctionnent et ont été testées, mais les suivant
 - 'exec + programme ou chemin d'accès absolu ou relatif' permet d'exécuter au premier plan un programme du système d'exploitation
 - 'NomProgramme!' permet d'exécuter en tâche de fond un programme
 - 'keep <processId>' permet de détacher certains processus du CLIi  
+
+le fichier "script.py" est utile pour tester certaines fonctionnalités, comme 'bing'
