@@ -12,6 +12,18 @@ import (
 
 var count = 0
 
+type CaseACal struct {
+	colonne []int
+	ligne   []int
+	x       int
+	y       int
+}
+type caseCalcule struct {
+	indiceLigne   int
+	indiceColonne int
+	resultat      int
+}
+
 func main() {
 	arguments := os.Args
 	if len(arguments) == 1 {
@@ -48,6 +60,8 @@ func handleConnection(c net.Conn) {
 
 		temp := strings.TrimSpace(string(netData))
 		if temp == "STOP" {
+			c.Write([]byte("%quit%"))
+			c.Close()
 			break
 		}
 
@@ -106,18 +120,30 @@ func handleConnection(c net.Conn) {
 		for j := range matriceProduit {
 			matriceProduit[j] = make([]int, len(matriceB[0]))
 		}
+
+		var i, k int
+		CaseToCalcul := make(chan CaseACal)
+		CaseResultat := make(chan caseCalcule)
+		var NombreCase = len(matriceA) * len(matriceB[0])
+
+		go RemplirCanal(NombreCase, &CaseToCalcul, matriceA, matriceB) // prend les canaux où on a poussé les cases
+		// Lancement des goroutines pour calculer les cases dans le problème et les pushs dans un autre canal
+		for k = 0; k < 5; k++ {
+			go calculUneCase(CaseToCalcul, CaseResultat)
+		}
 		// On récupère le résultat de matriceProduit avec la fonction produitMatriciel
-		matriceProduit = produitMatriciel(matriceA, matriceB)
+		//matriceProduit = produitMatriciel(matriceA, matriceB)
+		for i = 0; i < NombreCase; i++ {
+			for case2 := range CaseResultat {
+				matriceProduit[case2.indiceLigne][case2.indiceColonne] = case2.resultat
+			}
+		}
 
 		//Affichage de la matrice Produit
 		fmt.Println("------------- La matrice Produit -------------\n")
 		c.Write([]byte("------------- La matrice Produit -------------\n"))
 		affichageMatrice(matriceProduit, c)
-		/*
-			fmt.Println(temp)
-			counter := strconv.Itoa(count) + "\n"
-			c.Write([]byte(string(counter)))
-		*/
+
 	}
 	c.Close()
 }
@@ -157,10 +183,15 @@ func lireMatrice(nomFichier string) ([][]int, error) {
 }
 
 // Fonction qui fait le produit Matriciel de A et B
-func produitMatriciel(a [][]int, b [][]int) [][]int {
+/*func produitMatriciel(a [][]int, b [][]int) [][]int {
 	var i, k int
-	canalInt := make(chan int)
+	CaseToCalcul := make(chan CaseACal, 5)
+	CaseResultat := make(chan caseCalcule, 5)
+	var NombreCase = len(a) * len(b[0])
+	var CasesProbleme = make([]CaseACal, NombreCase)
+
 	matriceRes := make([][]int, len(a))
+
 	for j := range matriceRes {
 		matriceRes[j] = make([]int, len(b[0]))
 	}
@@ -170,24 +201,59 @@ func produitMatriciel(a [][]int, b [][]int) [][]int {
 		col = Inversion(b, i)
 		for k = 0; k < len(a); k++ {
 			// pour chaque ligne on effectue le calcul d'une case avec la go function
-			go calculUneCase(a[k][:], col[:], len(b), canalInt)
-			matriceRes[k][i] = <-canalInt
-			//fmt.Print("Le nouveau terme calculé est :")
-			//fmt.Println(matriceRes[k][i])
-			//fmt.Print("\n")
+			for j := 0; j < NombreCase; j++ {
+				CasesProbleme[j].colonne = col[:]
+				CasesProbleme[j].ligne = a[k][:]
+				CasesProbleme[j].x = k
+				CasesProbleme[j].y = i
+			}
 		}
 	}
+		go RemplirCanal(NombreCase, &CaseToCalcul, &CasesProbleme) // prend les canaux où on a poussé les cases
+	// Lancement des goroutines pour calculer les cases dans le problème et les pushs dans un autre canal
+	for k = 0; k < 5; k++ {
+		go calculUneCase(CaseToCalcul, CaseResultat)
+	}
 	return matriceRes
+}*/
+func RemplirCanal(y int, canal *chan CaseACal, a [][]int, b [][]int) {
+	var NombreCase = len(a) * len(b[0])
+	var j = 0
+	for i := 0; i < len(b[0]); i++ {
+		// on récupère i-ème la colonne de la matrice B
+		col := make([]int, len(b))
+		col = Inversion(b, i)
+		for k := 0; k < len(a); k++ {
+			// pour chaque ligne on effectue le calcul d'une case avec la go function
+			for j < NombreCase {
+				var CasesProbleme CaseACal
+				CasesProbleme.colonne = col[:]
+				CasesProbleme.ligne = a[k][:]
+				CasesProbleme.x = k
+				CasesProbleme.y = i
+				*canal <- CasesProbleme
+				j++
+			}
+		}
+	}
+
 }
 
 // Fonction pour calculer une case de la matrice produit
-func calculUneCase(c []int, l []int, taille int, a chan int) {
-	var res int
-	res = 0
-	for i := 0; i < taille; i++ {
-		res += c[i] * l[i]
+
+func calculUneCase(canal1 chan CaseACal, canal2 chan caseCalcule) {
+	for case1 := range canal1 {
+		var CaseRes caseCalcule
+		CaseRes.indiceLigne = case1.x
+		CaseRes.indiceColonne = case1.y
+		var somme = 0
+		for i := 0; i < len(case1.colonne); i++ {
+			somme += case1.colonne[i] * case1.ligne[i]
+		}
+		CaseRes.resultat = somme
+		canal2 <- CaseRes
 	}
-	a <- res
+
 }
 
 // Fonction qui prend une matrice et un indice

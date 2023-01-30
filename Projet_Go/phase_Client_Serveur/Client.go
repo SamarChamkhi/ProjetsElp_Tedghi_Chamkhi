@@ -40,7 +40,8 @@ func readConnection(conn net.Conn) {
 			fmt.Println(">", text)
 		}
 	}
-	fmt.Println("Reached EOF on server connection.")
+	fmt.Println("Reached EOF on server connection. Press ctrl + C to quit")
+	conn.Close()
 }
 func handleCommands(text string, conn net.Conn) bool {
 	r, _ := regexp.Compile("^%.*%$")
