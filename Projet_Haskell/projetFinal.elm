@@ -131,7 +131,7 @@ view model =
 viewWordMeaning : Word -> Html Msg
 viewWordMeaning word =
     div []
-        [ 
+        [
            ul [] (List.map viewMeaning word.meanings)
         ]
 
@@ -166,4 +166,3 @@ definitionDecoder : Decoder Definition
 definitionDecoder =
     Json.Decode.map Definition
         (field "definition" string)
-
