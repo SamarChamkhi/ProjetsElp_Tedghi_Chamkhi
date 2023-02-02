@@ -75,7 +75,7 @@ update message model =
             listeMots = String.split " " fullText
           in
           ( { model |listeMots = listeMots }
-          , Random.generate Numero (Random.int 1 1000) )
+          , Random.generate Num (Random.int 1 1000) )
 
         Err _ ->
           ({model|sucess=Fail}, Cmd.none)
