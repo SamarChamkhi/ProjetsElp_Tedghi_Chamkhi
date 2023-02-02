@@ -46,7 +46,7 @@ type alias Definition =
 
 
 -- INIT
-init : () -> (Model, Cmd Msg)
+init : () -> (Model, Cmd Message)
 init _ =
   ( Model "" [] Load "" False
   , Http.get
@@ -56,7 +56,7 @@ init _ =
   )
 
 -- UPDATE
-type Model2
+type Message
   = GotText (Result Http.Error String)
   | GotMot (Result Http.Error (List Mot))
   | Numero Int
@@ -65,9 +65,9 @@ type Model2
   | Reveler Bool
  
 
-update : Model2 -> Model -> (Model, Cmd Msg)
-update model2 model =
-  case model2 of
+update : Message -> Model -> (Model, Cmd Message)
+update message model =
+  case message of
     GotText result ->
       case result of
         Ok fullText ->
@@ -107,11 +107,11 @@ update model2 model =
 
 
 -- SUBSCRIPTIONS
-subscriptions : Model -> Sub Msg
+subscriptions : Model -> Sub Message
 subscriptions model =
   Sub.none
 
-view : Model -> Html Msg
+view : Model -> Html Message
 view model =
   case model.sucess of
     Fail ->
@@ -129,21 +129,21 @@ view model =
          button [onClick (Reveler True)][text "Show the answer"]
        ]
 
-viewMotMeaning : Mot -> Html Msg
+viewMotMeaning : Mot -> Html Message
 viewMotMeaning Mot =
     div []
         [
            ul [] (List.map viewMeaning Mot.meanings)
         ]
 
-viewMeaning : Meaning -> Html Msg
+viewMeaning : Meaning -> Html Message
 viewMeaning meaning =
     li []
         [ text meaning.partOfSpeech        
         , ul [] (List.map viewDefinition meaning.definitions)
         ]
 
-viewDefinition : Definition -> Html Msg
+viewDefinition : Definition -> Html Message
 viewDefinition def =
     li [] [ text def.definition ]
 
