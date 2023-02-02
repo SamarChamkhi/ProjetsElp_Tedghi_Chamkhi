@@ -54,7 +54,7 @@ init : () -> (Model, Cmd Message)
 init _ =
   ( Model "" [] Load "" False
   , Http.get
-      { url = "http://localhost:8000/Mots Mots.txt"
+      { url = "http://localhost:8000/Mots/words.txt"
       , expect = Http.expectString GotText
       }
   )
