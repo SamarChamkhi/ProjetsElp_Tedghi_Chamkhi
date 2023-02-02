@@ -60,9 +60,10 @@ type Model2
   = GotText (Result Http.Error String)
   | GotMot (Result Http.Error (List Mot))
   | Numero Int
+  | Recharger
   | Devine String
   | Reveler Bool
-  | Recharger
+ 
 
 update : Model2 -> Model -> (Model, Cmd Msg)
 update model2 model =
