@@ -33,7 +33,7 @@ type alias Model =
 
 
 type alias Mot =
-    { Mot : String
+    { mot : String
     , meanings : List Meaning
     }
 type alias Meaning =
@@ -56,52 +56,52 @@ init _ =
   )
 
 -- UPDATE
-type Msg
+type Model2
   = GotText (Result Http.Error String)
-  | Go Mot (Result Http.Error (List Mot))
-  | Num Int
-  | Reload
-  | devine String
-  | reveler Bool
+  | GotMot (Result Http.Error (List Mot))
+  | Numero Int
+  | Devine String
+  | Reveler Bool
+  | Recharger
 
-update : Msg -> Model -> (Model, Cmd Msg)
-update msg model =
-  case msg of
+update : Model2 -> Model -> (Model, Cmd Msg)
+update model2 model =
+  case model2 of
     GotText result ->
       case result of
         Ok fullText ->
           let
             listeMots = String.split " " fullText
           in
-          ( { model | listeMots = listeMots }
-          , Random.generate Num (Random.int 1 1000) )
+          ( { model |listeMots = listeMots }
+          , Random.generate Numero (Random.int 1 1000) )
 
         Err _ ->
           ({model|sucess=Fail}, Cmd.none)
-    Num num ->  
+    Numero numero ->  
       let
-        mot = Maybe.withDefault "" (List.head (List.drop num model.listeMots))
+        mot = Maybe.withDefault "" (List.head (List.drop numero model.listeMots))
       in
       ( { model | mot = mot }
       , Http.get
           { url = "https://api.dictionaryapi.dev/api/v2/entries/en/" ++ mot
-          , expect = Http.expectJson Go Mot descriptionDecoder
+          , expect = Http.expectJson GotMot descriptionDecoder
           }
       )
-    Go Mot result ->
+    GotMot result ->
         case result of
           Ok MotList ->
               ({model | sucess = Success (model.mot, MotList)}, Cmd.none)
           Err _ ->
               ({model | sucess = Fail }, Cmd.none)
-    Reload ->
+     Recharger ->
       init()
- devine ->
+    Devine devine ->
         if devine == model.mot then
-            ({model | devine = "Bravo, c'est gagné !!!"}, Cmd.none)
+            ({model | devine = "Very good, you guessed it right !!!"}, Cmd.none)
         else
             ({model | devine = devine}, Cmd.none)
-    reveler reveler ->
+    Reveler reveler ->
         ({model | reveler = reveler}, Cmd.none)
 
 
@@ -114,25 +114,25 @@ view : Model -> Html Msg
 view model =
   case model.sucess of
     Fail ->
-      text "I was unable to load the Mot or its definition."
+      text "I was unable to load the Word or its definition."
 
     Load ->
-      text "Load..."
+      text "Loading..."
 
     Success (mot, Mots) ->
        div [] [
-         text ( devine the Mot : "++(if model.reveler then mot else " ")),
+         text ("Guess the Mot : "++(if model.reveler then mot else " ")),
          div [] (List.map vie MotMeaning Mots),
-         input [ onInput devine, value model devine ] [],
-         button [ onClick Reload ] [ text "Reload" ],
-         button [onClick (reveler True)][text "show the answer"]
+         input [ onInput Devine, value model.devine ] [],
+         button [ onClick  Recharger ] [ text "Reload" ],
+         button [onClick (Reveler True)][text "Show the answer"]
        ]
 
 vie MotMeaning : Mot -> Html Msg
-vie MotMeaning Mot =
+vie MotMeaning mot =
     div []
         [
-           ul [] (List.map viewMeaning Mot.meanings)
+           ul [] (List.map viewMeaning mot.meanings)
         ]
 
 viewMeaning : Meaning -> Html Msg
@@ -151,7 +151,7 @@ descriptionDecoder : Decoder (List Mot)
 descriptionDecoder = Json.Decode.list MotDecoder
  MotDecoder : Decoder MotDecoder =
     map2 Mot
-        (field  Mot" string)
+        (field  "mot" string)
         (field "meanings" (Json.Decode.list meaningDecoder))
 
 meaningDecoder : Decoder Meaning
