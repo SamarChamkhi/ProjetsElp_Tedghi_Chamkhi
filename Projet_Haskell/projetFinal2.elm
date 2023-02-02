@@ -1,4 +1,4 @@
-module Test2 exposing (..)
+module Test exposing (..)
 
 import Browser
 import Http
@@ -22,22 +22,23 @@ main =
 
 -- MODEL
 type Resultat
-  = Fail
-  | Load
-  | Success (String, List Mot)
+  = Failure
+  | Loading
+  | Success (String, List Word)
 
 
 -- MODEL
 type alias Model =
-   { word: String
-   , listeMots:List String
+   { mot: String
+   , donne:List String
    , sucess:Resultat
-   , devine: String
-   , reveler:Bool
+   , guess: String
+   , reveal:Bool
    }
 
-type alias Mot =
-    { mot : String
+
+type alias Word =
+    { word : String
     , meanings : List Meaning
     }
 type alias Meaning =
@@ -50,9 +51,9 @@ type alias Definition =
 
 
 -- INIT
-init : () -> (Model, Cmd Message)
+init : () -> (Model, Cmd Msg)
 init _ =
-  ( Model "" [] Load "" False
+  ( Model "" [] Loading "" False
   , Http.get
       { url = "http://localhost:8000/Mots/words.txt"
       , expect = Http.expectString GotText
@@ -60,105 +61,104 @@ init _ =
   )
 
 -- UPDATE
-type Message
+type Msg
   = GotText (Result Http.Error String)
-  | GotMot (Result Http.Error (List Mot))
-  | Numero Int
-  | Recharger
-  | Devine String
-  | Reveler Bool
- 
+  | GotWord (Result Http.Error (List Word))
+  | Num Int
+  | Reload
+  | Guess String
+  | Reveal Bool
 
-update : Message -> Model -> (Model, Cmd Message)
-update message model =
-  case message of
+update : Msg -> Model -> (Model, Cmd Msg)
+update msg model =
+  case msg of
     GotText result ->
       case result of
         Ok fullText ->
           let
-            listeMots = String.split " " fullText
+            items = String.split " " fullText
           in
-          ( { model |listeMots = listeMots }
-          , Random.generate Numero (Random.int 1 1000) )
+          ( { model | donne = items }
+          , Random.generate Num (Random.int 1 1000) )
 
         Err _ ->
-          ({model|sucess=Fail}, Cmd.none)
-    Numero numero ->  
+          ({model|sucess=Failure}, Cmd.none)
+    Num num ->  
       let
-        word = Maybe.withDefault "" (List.head (List.drop numero model.listeMots))
+        mot = Maybe.withDefault "" (List.head (List.drop num model.donne))
       in
-      ( { model | word = word }
+      ( { model | mot = mot }
       , Http.get
-          { url = "https://api.dictionaryapi.dev/api/v2/entries/en/" ++ word
-          , expect = Http.expectJson GotMot descriptionDecoder
+          { url = "https://api.dictionaryapi.dev/api/v2/entries/en/" ++ mot
+          , expect = Http.expectJson GotWord descriptionDecoder
           }
       )
-    GotMot result ->
+    GotWord result ->
         case result of
-          Ok motList ->
-              ({model | sucess = Success (model.word, motList)}, Cmd.none)
+          Ok wordList ->
+              ({model | sucess = Success (model.mot, wordList)}, Cmd.none)
           Err _ ->
-              ({model | sucess = Fail }, Cmd.none)
-    Recharger ->
+              ({model | sucess = Failure }, Cmd.none)
+    Reload ->
       init()
-    Devine devine ->
-        if devine == model.word then
-            ({model | devine = "Very good, you guessed it right !!!"}, Cmd.none)
+    Guess guess ->
+        if guess == model.mot then
+            ({model | guess = "Bravo, c'est gagné !!!"}, Cmd.none)
         else
-            ({model | devine = devine}, Cmd.none)
-    Reveler reveler ->
-        ({model | reveler = reveler}, Cmd.none)
+            ({model | guess = guess}, Cmd.none)
+    Reveal reveal ->
+        ({model | reveal = reveal}, Cmd.none)
 
 
 -- SUBSCRIPTIONS
-subscriptions : Model -> Sub Message
+subscriptions : Model -> Sub Msg
 subscriptions model =
   Sub.none
 
-view : Model -> Html Message
+view : Model -> Html Msg
 view model =
   case model.sucess of
-    Fail ->
-      text "I was unable to load the Word or its definition."
+    Failure ->
+      text "I was unable to load the word or its definition."
 
-    Load ->
+    Loading ->
       text "Loading..."
 
-    Success (mot, mots) ->
+    Success (mot, words) ->
        div [] [
-         text ("Guess the Mot : "++(if model.reveler then mot else " ")),
-         div [] (List.map viewMotMeaning mots),
-         input [ onInput Devine, value model.devine ] [],
-         button [ onClick  Recharger ] [ text "Reload" ],
-         button [onClick (Reveler True)][text "Show the answer"]
+         text ("Guess the word : "++(if model.reveal then mot else " ")),
+         div [] (List.map viewWordMeaning words),
+         input [ onInput Guess, value model.guess ] [],
+         button [ onClick Reload ] [ text "Reload" ],
+         button [onClick (Reveal True)][text "show the answer"]
        ]
 
-viewMotMeaning : Mot -> Html Message
-viewMotMeaning mot1 =
+viewWordMeaning : Word -> Html Msg
+viewWordMeaning word =
     div []
         [
-           ul [] (List.map viewMeaning mot1.meanings)
+           ul [] (List.map viewMeaning word.meanings)
         ]
 
-viewMeaning : Meaning -> Html Message
+viewMeaning : Meaning -> Html Msg
 viewMeaning meaning =
     li []
         [ text meaning.partOfSpeech        
         , ul [] (List.map viewDefinition meaning.definitions)
         ]
 
-viewDefinition : Definition -> Html Message
+viewDefinition : Definition -> Html Msg
 viewDefinition def =
     li [] [ text def.definition ]
 
 -- Decoders
-descriptionDecoder : Decoder (List Mot)
-descriptionDecoder = Json.Decode.list motDecoder
+descriptionDecoder : Decoder (List Word)
+descriptionDecoder = Json.Decode.list wordDecoder
 
-motDecoder : Decoder Mot
-motDecoder =
-    map2 Mot
-        (field  "mot" string)
+wordDecoder : Decoder Word
+wordDecoder =
+    map2 Word
+        (field "word" string)
         (field "meanings" (Json.Decode.list meaningDecoder))
 
 meaningDecoder : Decoder Meaning
