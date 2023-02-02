@@ -21,15 +21,15 @@ main =
     }
 
 -- MODEL
-type R
-  = Failure
-  | Loading
+type Resultat
+  = Fail
+  | Load
   | Success (String, List Mot)
 
 
 -- MODEL
 type alias Model =
-   {mot: String, items:List String, sucess:R, guess: String, reveal:Bool}
+   {mot: String, listeMots:List String, sucess:Resultat, devine: String, reveler:Bool}
 
 
 type alias Mot =
@@ -48,7 +48,7 @@ type alias Definition =
 -- INIT
 init : () -> (Model, Cmd Msg)
 init _ =
-  ( Model "" [] Loading "" False
+  ( Model "" [] Load "" False
   , Http.get
       { url = "http://localhost:8000/Mots Mots.txt"
       , expect = Http.expectString GotText
@@ -61,8 +61,8 @@ type Msg
   | Go Mot (Result Http.Error (List Mot))
   | Num Int
   | Reload
-  | Guess String
-  | Reveal Bool
+  | devine String
+  | reveler Bool
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -71,16 +71,16 @@ update msg model =
       case result of
         Ok fullText ->
           let
-            items = String.split " " fullText
+            listeMots = String.split " " fullText
           in
-          ( { model | items = items }
+          ( { model | listeMots = listeMots }
           , Random.generate Num (Random.int 1 1000) )
 
         Err _ ->
-          ({model|sucess=Failure}, Cmd.none)
+          ({model|sucess=Fail}, Cmd.none)
     Num num ->  
       let
-        mot = Maybe.withDefault "" (List.head (List.drop num model.items))
+        mot = Maybe.withDefault "" (List.head (List.drop num model.listeMots))
       in
       ( { model | mot = mot }
       , Http.get
@@ -93,16 +93,16 @@ update msg model =
           Ok MotList ->
               ({model | sucess = Success (model.mot, MotList)}, Cmd.none)
           Err _ ->
-              ({model | sucess = Failure }, Cmd.none)
+              ({model | sucess = Fail }, Cmd.none)
     Reload ->
       init()
-    Guess guess ->
-        if guess == model.mot then
-            ({model | guess = "Bravo, c'est gagné !!!"}, Cmd.none)
+ devine ->
+        if devine == model.mot then
+            ({model | devine = "Bravo, c'est gagné !!!"}, Cmd.none)
         else
-            ({model | guess = guess}, Cmd.none)
-    Reveal reveal ->
-        ({model | reveal = reveal}, Cmd.none)
+            ({model | devine = devine}, Cmd.none)
+    reveler reveler ->
+        ({model | reveler = reveler}, Cmd.none)
 
 
 -- SUBSCRIPTIONS
@@ -113,19 +113,19 @@ subscriptions model =
 view : Model -> Html Msg
 view model =
   case model.sucess of
-    Failure ->
+    Fail ->
       text "I was unable to load the Mot or its definition."
 
-    Loading ->
-      text "Loading..."
+    Load ->
+      text "Load..."
 
     Success (mot, Mots) ->
        div [] [
-         text ("Guess the Mot : "++(if model.reveal then mot else " ")),
+         text ( devine the Mot : "++(if model.reveler then mot else " ")),
          div [] (List.map vie MotMeaning Mots),
-         input [ onInput Guess, value model.guess ] [],
+         input [ onInput devine, value model devine ] [],
          button [ onClick Reload ] [ text "Reload" ],
-         button [onClick (Reveal True)][text "show the answer"]
+         button [onClick (reveler True)][text "show the answer"]
        ]
 
 vie MotMeaning : Mot -> Html Msg
