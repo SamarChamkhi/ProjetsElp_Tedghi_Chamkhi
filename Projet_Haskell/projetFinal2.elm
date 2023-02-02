@@ -95,7 +95,7 @@ update model2 model =
               ({model | sucess = Success (model.mot, MotList)}, Cmd.none)
           Err _ ->
               ({model | sucess = Fail }, Cmd.none)
-     Recharger ->
+    Recharger ->
       init()
     Devine devine ->
         if devine == model.mot then
