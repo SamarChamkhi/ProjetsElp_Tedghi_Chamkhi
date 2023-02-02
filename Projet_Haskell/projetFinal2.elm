@@ -129,6 +129,7 @@ view model =
          text ("Guess the word : "++(if model.reveal then mot else " ")),
          div [] (List.map viewWordMeaning words),
          input [ onInput Guess, value model.guess ] [],
+         div [] 
          button [ onClick Reload ] [ text "Reload" ],
          button [onClick (Reveal True)][text "show the answer"]
        ]
