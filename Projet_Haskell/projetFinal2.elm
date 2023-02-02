@@ -4,6 +4,7 @@ import Browser
 import Http
 import Html as H exposing (Html)
 import Html exposing (..)
+import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import Random
 import Task
@@ -129,8 +130,8 @@ view model =
          text ("Guess the word : "++(if model.reveal then mot else " ")),
          div [] (List.map viewWordMeaning words),
          input [ onInput Guess, value model.guess ] [],
-         div [] [ button [ onClick Reload ] [ text "Reload" ]
-                , button [onClick (Reveal True)][text "show the answer"]
+         div [] [ button [ onClick Reload,style "data-inline" "true", style "background-color" "#b5ead7",style "color" "white", style "border-color" "#b5ead7", style "font-size" "100%", style "padding" "5px 25px", style "margin-left" "50px" ] [ text "Reload" ]
+                , button [onClick (Reveal True),,style "data-inline" "true", style "background-color" "#b5ead7",style "color" "white", style "border-color" "#b5ead7", style "font-size" "100%", style "padding" "5px 25px", style "margin-left" "50px"][text "Show The Answer"]
                 ]
        ]
 
