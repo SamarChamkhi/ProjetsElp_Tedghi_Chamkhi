@@ -130,10 +130,10 @@ view model =
        ]
 
 vie MotMeaning : Mot -> Html Msg
-vie MotMeaning mot =
+vie MotMeaning Mot =
     div []
         [
-           ul [] (List.map viewMeaning mot.meanings)
+           ul [] (List.map viewMeaning Mot.meanings)
         ]
 
 viewMeaning : Meaning -> Html Msg
