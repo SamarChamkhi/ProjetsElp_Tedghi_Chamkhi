@@ -91,8 +91,8 @@ update message model =
       )
     GotMot result ->
         case result of
-          Ok MotList ->
-              ({model | sucess = Success (model.mot, MotList)}, Cmd.none)
+          Ok motList ->
+              ({model | sucess = Success (model.mot, motList)}, Cmd.none)
           Err _ ->
               ({model | sucess = Fail }, Cmd.none)
     Recharger ->
@@ -120,20 +120,20 @@ view model =
     Load ->
       text "Loading..."
 
-    Success (mot, Mots) ->
+    Success (mot, mots) ->
        div [] [
          text ("Guess the Mot : "++(if model.reveler then mot else " ")),
-         div [] (List.map viewMotMeaning Mots),
+         div [] (List.map viewMotMeaning mots),
          input [ onInput Devine, value model.devine ] [],
          button [ onClick  Recharger ] [ text "Reload" ],
          button [onClick (Reveler True)][text "Show the answer"]
        ]
 
 viewMotMeaning : Mot -> Html Message
-viewMotMeaning Mot =
+viewMotMeaning mot1 =
     div []
         [
-           ul [] (List.map viewMeaning Mot.meanings)
+           ul [] (List.map viewMeaning mot1.meanings)
         ]
 
 viewMeaning : Meaning -> Html Message
