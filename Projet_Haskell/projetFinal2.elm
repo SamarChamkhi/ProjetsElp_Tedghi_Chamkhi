@@ -29,8 +29,12 @@ type Resultat
 
 -- MODEL
 type alias Model =
-   {mot: String, listeMots:List String, sucess:Resultat, devine: String, reveler:Bool}
-
+   { word: String
+   , listeMots:List String
+   , sucess:Resultat
+   , devine: String
+   , reveler:Bool
+   }
 
 type alias Mot =
     { mot : String
@@ -75,30 +79,30 @@ update message model =
             listeMots = String.split " " fullText
           in
           ( { model |listeMots = listeMots }
-          , Random.generate Num (Random.int 1 1000) )
+          , Random.generate Numero (Random.int 1 1000) )
 
         Err _ ->
           ({model|sucess=Fail}, Cmd.none)
     Numero numero ->  
       let
-        mot = Maybe.withDefault "" (List.head (List.drop numero model.listeMots))
+        word = Maybe.withDefault "" (List.head (List.drop numero model.listeMots))
       in
-      ( { model | mot = mot }
+      ( { model | word = word }
       , Http.get
-          { url = "https://api.dictionaryapi.dev/api/v2/entries/en/" ++ mot
+          { url = "https://api.dictionaryapi.dev/api/v2/entries/en/" ++ word
           , expect = Http.expectJson GotMot descriptionDecoder
           }
       )
     GotMot result ->
         case result of
           Ok motList ->
-              ({model | sucess = Success (model.mot, motList)}, Cmd.none)
+              ({model | sucess = Success (model.word, motList)}, Cmd.none)
           Err _ ->
               ({model | sucess = Fail }, Cmd.none)
     Recharger ->
       init()
     Devine devine ->
-        if devine == model.mot then
+        if devine == model.word then
             ({model | devine = "Very good, you guessed it right !!!"}, Cmd.none)
         else
             ({model | devine = devine}, Cmd.none)
