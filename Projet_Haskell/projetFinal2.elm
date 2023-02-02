@@ -24,7 +24,7 @@ main =
 type Resultat
   = Failure
   | Loading
-  | Success (String, List Word)
+  | Success (String, List Words)
 
 
 -- MODEL
@@ -37,7 +37,7 @@ type alias Model =
    }
 
 
-type alias Word =
+type alias Words =
     { word : String
     , meanings : List Meaning
     }
@@ -63,7 +63,7 @@ init _ =
 -- UPDATE
 type Msg
   = GotText (Result Http.Error String)
-  | GotWord (Result Http.Error (List Word))
+  | GotWord (Result Http.Error (List Words))
   | Num Int
   | Reload
   | Guess String
@@ -133,11 +133,11 @@ view model =
          button [onClick (Reveal True)][text "show the answer"]
        ]
 
-viewWordMeaning : Word -> Html Msg
-viewWordMeaning word =
+viewWordMeaning : Words -> Html Msg
+viewWordMeaning words =
     div []
         [
-           ul [] (List.map viewMeaning word.meanings)
+           ul [] (List.map viewMeaning words.meanings)
         ]
 
 viewMeaning : Meaning -> Html Msg
@@ -152,12 +152,12 @@ viewDefinition def =
     li [] [ text def.definition ]
 
 -- Decoders
-descriptionDecoder : Decoder (List Word)
+descriptionDecoder : Decoder (List Words)
 descriptionDecoder = Json.Decode.list wordDecoder
 
-wordDecoder : Decoder Word
+wordDecoder : Decoder Words
 wordDecoder =
-    map2 Word
+    map2 Words
         (field "word" string)
         (field "meanings" (Json.Decode.list meaningDecoder))
 
