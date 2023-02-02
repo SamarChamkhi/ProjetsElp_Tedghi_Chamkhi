@@ -123,14 +123,14 @@ view model =
     Success (mot, Mots) ->
        div [] [
          text ("Guess the Mot : "++(if model.reveler then mot else " ")),
-         div [] (List.map vie MotMeaning Mots),
+         div [] (List.map viewMotMeaning Mots),
          input [ onInput Devine, value model.devine ] [],
          button [ onClick  Recharger ] [ text "Reload" ],
          button [onClick (Reveler True)][text "Show the answer"]
        ]
 
-vie MotMeaning : Mot -> Html Msg
-vie MotMeaning Mot =
+viewMotMeaning : Mot -> Html Msg
+viewMotMeaning Mot =
     div []
         [
            ul [] (List.map viewMeaning Mot.meanings)
