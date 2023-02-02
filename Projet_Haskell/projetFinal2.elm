@@ -149,10 +149,10 @@ viewDefinition def =
 
 -- Decoders
 descriptionDecoder : Decoder (List Mot)
-descriptionDecoder = Json.Decode.list MotDecoder
+descriptionDecoder = Json.Decode.list motDecoder
 
-MotDecoder : Decoder Mot
-MotDecoder =
+motDecoder : Decoder Mot
+motDecoder =
     map2 Mot
         (field  "mot" string)
         (field "meanings" (Json.Decode.list meaningDecoder))
