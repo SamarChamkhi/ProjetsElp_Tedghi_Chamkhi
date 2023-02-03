@@ -33,7 +33,7 @@ type alias Model =
    { mot: String
    , donne:List String
    , sucess:Resultat
-   , guess: String
+   , devine: String
    , reveal:Bool
    }
 
@@ -67,7 +67,7 @@ type Msg
   | GotWord (Result Http.Error (List Words))
   | Num Int
   | Reload
-  | Guess String
+  | Devine String
   | Reveal Bool
 
 update : Msg -> Model -> (Model, Cmd Msg)
@@ -102,11 +102,11 @@ update msg model =
               ({model | sucess = Failure }, Cmd.none)
     Reload ->
       init()
-    Guess guess ->
-        if guess == model.mot then
-            ({model | guess = "Bravo, c'est gagné !!!"}, Cmd.none)
+    Devine devine ->
+        if devine == model.mot then
+            ({model | devine = "Bravo, c'est gagné !!!"}, Cmd.none)
         else
-            ({model | guess = guess}, Cmd.none)
+            ({model | devine = devine}, Cmd.none)
     Reveal reveal ->
         ({model | reveal = reveal}, Cmd.none)
 
@@ -130,7 +130,7 @@ view model =
          div [style "margin-left" "100px",style "data-inline" "true",style "color" "#cfa0e9",  style "font-size" "200%",style "width""100%"] [text ("Guess the word : "++(if model.reveal then mot else " "))],
          div [style "margin-left" "100px",style "data-inline" "true"] (List.map viewWordMeaning words),
          div [style "margin-left" "100px",style "data-inline" "true",style "color" "#cfa0e9",  style "font-size" "100%",style "width""2000%"][text "Type in the word to guess"],
-         input [ onInput Guess, value model.guess ,style "margin-left" "100px",style "padding" "5px 20px"] [],
+         input [ onInput Devine, value model.devine ,style "margin-left" "100px",style "padding" "5px 20px"] [],
          div [] [ button [ onClick Reload,style "data-inline" "true", style "background-color" "#cfa0e9",style "color" "Black", style "border-color" "#cfa0e9", style "font-size" "100%", style "padding" "5px 20px", style "margin-left" "100px" ] [ text "New Word" ]
                 , button [onClick (Reveal True),style "data-inline" "true", style "background-color" "#cfa0e9",style "color" "Black", style "border-color" "#cfa0e9", style "font-size" "100%", style "padding" "5px 20px", style "margin-left" "10px"][text "Show The Answer"]
                 ]
