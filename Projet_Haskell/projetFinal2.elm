@@ -127,14 +127,14 @@ view model =
 
     Success (mot, words) ->
        div [] [
-         text ("Guess the word : "++(if model.reveal then mot else " ")),
-         div [] (List.map viewWordMeaning words),
-         input [ onInput Guess, value model.guess ] [],
-         div [] [ button [ onClick Reload,style "data-inline" "true", style "background-color" "#b5ead7",style "color" "white", style "border-color" "#b5ead7", style "font-size" "100%", style "padding" "5px 25px", style "margin-left" "50px" ] [ text "Reload" ]
-                , button [onClick (Reveal True),,style "data-inline" "true", style "background-color" "#b5ead7",style "color" "white", style "border-color" "#b5ead7", style "font-size" "100%", style "padding" "5px 25px", style "margin-left" "50px"][text "Show The Answer"]
+         div [style "margin-left" "100px",style "data-inline" "true",style "color" "#cfa0e9",  style "font-size" "200%",style "width""100%"] [text ("Guess the word : "++(if model.reveal then mot else " "))],
+         div [style "margin-left" "100px",style "data-inline" "true"] (List.map viewWordMeaning words),
+         input [ onInput Guess, value model.guess ,style "margin-left" "100px",style "padding" "5px 20px"] [],
+         div [] [ button [ onClick Reload,style "data-inline" "true", style "background-color" "#cfa0e9",style "color" "Black", style "border-color" "#cfa0e9", style "font-size" "100%", style "padding" "5px 20px", style "margin-left" "100px" ] [ text "New Word" ]
+                , button [onClick (Reveal True),style "data-inline" "true", style "background-color" "#cfa0e9",style "color" "Black", style "border-color" "#cfa0e9", style "font-size" "100%", style "padding" "5px 20px", style "margin-left" "10px"][text "Show The Answer"]
                 ]
        ]
-
+       
 viewWordMeaning : Words -> Html Msg
 viewWordMeaning words =
     div []
