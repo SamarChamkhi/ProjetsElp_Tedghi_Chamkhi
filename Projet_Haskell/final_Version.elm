@@ -34,7 +34,7 @@ type alias Model =
    , donne:List String
    , sucess:Resultat
    , devine: String
-   , reveal:Bool
+   , showanswer:Bool
    }
 
 
@@ -68,7 +68,7 @@ type Msg
   | Num Int
   | Reload
   | Devine String
-  | Reveal Bool
+  | ShowAnswer Bool
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -107,8 +107,8 @@ update msg model =
             ({model | devine = "Bravo, c'est gagné !!!"}, Cmd.none)
         else
             ({model | devine = devine}, Cmd.none)
-    Reveal reveal ->
-        ({model | reveal = reveal}, Cmd.none)
+    ShowAnswer showanswer ->
+        ({model | showanswer = showanswer}, Cmd.none)
 
 
 -- SUBSCRIPTIONS
@@ -127,12 +127,12 @@ view model =
 
     Success (mot, words) ->
        div [] [
-         div [style "margin-left" "100px",style "data-inline" "true",style "color" "#cfa0e9",  style "font-size" "200%",style "width""100%"] [text ("Guess the word : "++(if model.reveal then mot else " "))],
+         div [style "margin-left" "100px",style "data-inline" "true",style "color" "#cfa0e9",  style "font-size" "200%",style "width""100%"] [text ("Guess the word : "++(if model.showanswer then mot else " "))],
          div [style "margin-left" "100px",style "data-inline" "true"] (List.map viewWordMeaning words),
          div [style "margin-left" "100px",style "data-inline" "true",style "color" "#cfa0e9",  style "font-size" "100%",style "width""2000%"][text "Type in the word to guess"],
          input [ onInput Devine, value model.devine ,style "margin-left" "100px",style "padding" "5px 20px"] [],
          div [] [ button [ onClick Reload,style "data-inline" "true", style "background-color" "#cfa0e9",style "color" "Black", style "border-color" "#cfa0e9", style "font-size" "100%", style "padding" "5px 20px", style "margin-left" "100px" ] [ text "New Word" ]
-                , button [onClick (Reveal True),style "data-inline" "true", style "background-color" "#cfa0e9",style "color" "Black", style "border-color" "#cfa0e9", style "font-size" "100%", style "padding" "5px 20px", style "margin-left" "10px"][text "Show The Answer"]
+                , button [onClick (ShowAnswer True),style "data-inline" "true", style "background-color" "#cfa0e9",style "color" "Black", style "border-color" "#cfa0e9", style "font-size" "100%", style "padding" "5px 20px", style "margin-left" "10px"][text "Show The Answer"]
                 ]
        ]
        
