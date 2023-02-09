@@ -130,7 +130,7 @@ view model =
          div [style "margin-left" "100px",style "data-inline" "true",style "color" "#cfa0e9",  style "font-size" "200%",style "width""100%"] [text ("Guess the word : "++(if model.showanswer then mot else " "))],
          div [style "margin-left" "100px",style "data-inline" "true"] (List.map viewWordMeaning words),
          div [style "margin-left" "100px",style "data-inline" "true",style "color" "#cfa0e9",  style "font-size" "100%",style "width""2000%"][text "Type in the word to guess"],
-         input [ onInput Devine, value model.devine ,style "margin-left" "100px",style "padding" "5px 20px"] [],
+         input [ onInput Devine, value model.devine ,style "margin-left" "100px",style "padding" "5px 20px"] ["text" "Tap Here"],
          div [] [ button [ onClick Reload,style "data-inline" "true", style "background-color" "#cfa0e9",style "color" "Black", style "border-color" "#cfa0e9", style "font-size" "100%", style "padding" "5px 20px", style "margin-left" "100px" ] [ text "New Word" ]
                 , button [onClick (ShowAnswer True),style "data-inline" "true", style "background-color" "#cfa0e9",style "color" "Black", style "border-color" "#cfa0e9", style "font-size" "100%", style "padding" "5px 20px", style "margin-left" "10px"][text "Show The Answer"]
                 ]

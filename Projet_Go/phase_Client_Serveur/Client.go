@@ -6,6 +6,7 @@ import (
 	"net"
 	"os"
 	"regexp"
+	"strings"
 )
 
 func main() {
@@ -25,9 +26,13 @@ func main() {
 	go readConnection(c)
 	for {
 		reader := bufio.NewReader(os.Stdin)
-		fmt.Print("> ")
+		fmt.Print("")
 		text, _ := reader.ReadString('\n')
 		fmt.Fprintf(c, text+"\n")
+		if strings.TrimSpace(string(text)) == "STOP" {
+			fmt.Println("Exiting TCP server!")
+			return
+		}
 	}
 }
 
@@ -37,7 +42,7 @@ func readConnection(conn net.Conn) {
 		text := scanner.Text()
 		command := handleCommands(text, conn)
 		if !command {
-			fmt.Println(">", text)
+			fmt.Println("", text)
 		}
 	}
 	fmt.Println("Reached EOF on server connection.")

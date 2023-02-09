@@ -49,9 +49,9 @@ func main() {
 }
 
 func handleConnection(c net.Conn) {
-	fmt.Print(".")
+	fmt.Println("Nouveau Client Connecté")
 	for {
-		c.Write([]byte("Est ce que vous voulez Le Résultat du produit Matriciel\n"))
+		c.Write([]byte("Est ce que vous voulez Le Résultat du produit Matriciel?\n"))
 
 		netData, err := bufio.NewReader(c).ReadString('\n')
 		if err != nil {
@@ -60,6 +60,7 @@ func handleConnection(c net.Conn) {
 		}
 		temp := strings.TrimSpace(string(netData))
 		if temp == "non" {
+			c.Write([]byte("Pour quitter taper STOP \n"))
 			continue
 		}
 		if temp == "STOP" {
